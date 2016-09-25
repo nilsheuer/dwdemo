@@ -34,6 +34,7 @@ public class App
     public static void main( String[] args )
     {
         System.out.println( "Hello World!" );
+
         URL datafile = null;
         List<String> datafileUrls = Arrays.asList(
                 "http://download-data.deutschebahn.com/static/datasets/callabike/20160615/HACKATHON_VEHICLE_CALL_A_BIKE.csv",
@@ -44,7 +45,7 @@ public class App
                 "http://download-data.deutschebahn.com/static/datasets/callabike/20160615/HACKATHON_AVAILABILITY_CALL_A_BIKE.zip"
                 );
         try {
-
+/*
             for (String path:datafileUrls
                  ) {
                 System.out.println( "Downloading " + path );
@@ -71,7 +72,7 @@ public class App
                     Files.delete (Paths.get(source));
                 }
             }
-
+*/
             AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
             File dir = new File("/data");
             File[] directoryListing = dir.listFiles();
@@ -80,7 +81,7 @@ public class App
                     try {
                         System.out.println("Uploading " + child.getName() +" to S3 from a file\n");
                         File file = new File(child.getAbsolutePath());
-                        s3client.putObject(new PutObjectRequest(
+                        s3Client.putObject(new PutObjectRequest(
                                 "dw-demo-nilsheuer-nilstest2", child.getName(), file));
 
                     } catch (AmazonServiceException ase) {
@@ -112,18 +113,11 @@ public class App
 
 
         }
-        catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+
+        catch (Exception e) {
             e.printStackTrace();
         }
-
-
-        catch (ZipException e) {
-            e.printStackTrace();
-        }
+ 
 
 
     }
