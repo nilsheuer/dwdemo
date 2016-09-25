@@ -80,7 +80,7 @@ public class App
                         System.out.println("Uploading " + child.getName() +" to S3 from a file\n");
                         File file = new File(child.getAbsolutePath());
                         s3client.putObject(new PutObjectRequest(
-                                "db-demo-nilsheuer", child.getName(), file));
+                                "dw-demo-nilsheuer-nilstest2", child.getName(), file));
 
                     } catch (AmazonServiceException ase) {
                         System.out.println("Caught an AmazonServiceException, which " +
