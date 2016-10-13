@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 
 /**
@@ -45,7 +46,7 @@ public class App
                 "http://download-data.deutschebahn.com/static/datasets/callabike/20160615/HACKATHON_AVAILABILITY_CALL_A_BIKE.zip"
                 );
         try {
-/*
+
             for (String path:datafileUrls
                  ) {
                 System.out.println( "Downloading " + path );
@@ -68,11 +69,76 @@ public class App
                     ZipFile zipFile = new ZipFile(source);
 
                     zipFile.extractAll(destination);
+                    String inputfile = zipFile.getFile().getName();
                     System.out.println("deleting archive");
-                    Files.delete (Paths.get(source));
-                }
+                    //Files.delete (Paths.get(source));
+
+                    //split large files for faster copy to Redshift
+                    try{
+                        // Reading file and getting no. of files to be generated
+
+                        double nol = 2000.0; //  No. of lines to be split and saved in each output file.
+                        File file = new File(inputfile);
+                        Scanner scanner = new Scanner(file);
+                        int count = 0;
+                        while (scanner.hasNextLine())
+                        {
+                            scanner.nextLine();
+                            count++;
+                        }
+                        System.out.println("Lines in the file: " + count);     // Displays no. of lines in the input file.
+
+                        double temp = (count/nol);
+                        int temp1=(int)temp;
+                        int nof=0;
+                        if(temp1==temp)
+                        {
+                            nof=temp1;
+                        }
+                        else
+                        {
+                            nof=temp1+1;
+                        }
+                        System.out.println("No. of files to be generated :"+nof); // Displays no. of files to be generated.
+
+                        //---------------------------------------------------------------------------------------------------------
+
+                        // Actual splitting of file into smaller files
+
+                        FileInputStream fstream = new FileInputStream(inputfile); DataInputStream in = new DataInputStream(fstream);
+
+                        BufferedReader br = new BufferedReader(new InputStreamReader(in)); String strLine;
+
+                        for (int j=1;j<=nof;j++)
+                        {
+                            FileWriter fstream1 = new FileWriter("/data"+j+".csv");     // Destination File Location
+                            BufferedWriter out = new BufferedWriter(fstream1);
+                            for (int i=1;i<=nol;i++)
+                            {
+                                strLine = br.readLine();
+                                if (strLine!= null)
+                                {
+                                    out.write(strLine);
+                                    if(i!=nol)
+                                    {
+                                        out.newLine();
+                                    }
+                                }
+                            }
+                            out.close();
+                        }
+
+                        in.close();
+                    }catch (Exception e)
+                    {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+
+
+
             }
-*/
+            }
+
             AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
             File dir = new File("/data");
             File[] directoryListing = dir.listFiles();
@@ -117,7 +183,7 @@ public class App
         catch (Exception e) {
             e.printStackTrace();
         }
- 
+
 
 
     }
