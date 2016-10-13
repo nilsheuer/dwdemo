@@ -138,7 +138,7 @@ public class App
 
             }
             }
-
+            String s3BucketName = System.getenv("DWS3BUCKET");
             AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
             File dir = new File("/data");
             File[] directoryListing = dir.listFiles();
@@ -148,7 +148,7 @@ public class App
                         System.out.println("Uploading " + child.getName() +" to S3 from a file\n");
                         File file = new File(child.getAbsolutePath());
                         s3Client.putObject(new PutObjectRequest(
-                                "dw-demo-nilsheuer-nilstest2", child.getName(), file));
+                                s3BucketName, child.getName(), file));
 
                     } catch (AmazonServiceException ase) {
                         System.out.println("Caught an AmazonServiceException, which " +
