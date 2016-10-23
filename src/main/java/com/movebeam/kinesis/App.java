@@ -37,6 +37,7 @@ public class App
         System.out.println( "Hello World!" );
 
         URL datafile = null;
+        /*
         List<String> datafileUrls = Arrays.asList(
                 "http://download-data.deutschebahn.com/static/datasets/callabike/20160615/HACKATHON_VEHICLE_CALL_A_BIKE.csv",
                 "http://download-data.deutschebahn.com/static/datasets/callabike/20160615/HACKATHON_RENTAL_ZONE_CALL_A_BIKE.csv",
@@ -45,10 +46,22 @@ public class App
                 "http://download-data.deutschebahn.com/static/datasets/callabike/20160615/HACKATHON_EFFICIENCY_CALL_A_BIKE.zip",
                 "http://download-data.deutschebahn.com/static/datasets/callabike/20160615/HACKATHON_AVAILABILITY_CALL_A_BIKE.zip"
                 );
+                */
+
+        List<String> datafileUrls = Arrays.asList(
+                "https://s3-eu-west-1.amazonaws.com/dbdemodata/HACKATHON_AVAILABILITY_CALL_A_BIKE.zip",
+                "https://s3-eu-west-1.amazonaws.com/dbdemodata/HACKATHON_BOOKING_CALL_A_BIKE.zip",
+                "https://s3-eu-west-1.amazonaws.com/dbdemodata/HACKATHON_CATEGORY_CALL_A_BIKE.zip",
+                "https://s3-eu-west-1.amazonaws.com/dbdemodata/HACKATHON_EFFICIENCY_CALL_A_BIKE.zip",
+                "https://s3-eu-west-1.amazonaws.com/dbdemodata/HACKATHON_RENTAL_ZONE_CALL_A_BIKE.zip",
+                "https://s3-eu-west-1.amazonaws.com/dbdemodata/HACKATHON_VEHICLE_CALL_A_BIKE.zip"
+        );
+
         try {
 
             for (String path:datafileUrls
                  ) {
+
                 System.out.println( "Downloading " + path );
 
                 String fileName = FilenameUtils.getName(path);
@@ -62,6 +75,7 @@ public class App
                 FileOutputStream fos = new FileOutputStream("/data/" + fileName);
                 fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
                 System.out.println("Download finished");
+
                 if (extension.equals("zip")) {
                     System.out.println("unpacking zip");
                     String source = "/data/" + fileName;
@@ -69,15 +83,17 @@ public class App
                     ZipFile zipFile = new ZipFile(source);
 
                     zipFile.extractAll(destination);
-                    String inputfile = zipFile.getFile().getName();
+                    String inputfile = "/data/"+ zipFile.getFile().getName();
+                    inputfile = inputfile.replace(".zip",".csv");
+
                     System.out.println("deleting archive");
-                    //Files.delete (Paths.get(source));
+                    Files.delete (Paths.get(source));
 
                     //split large files for faster copy to Redshift
                     try{
                         // Reading file and getting no. of files to be generated
-
-                        double nol = 2000.0; //  No. of lines to be split and saved in each output file.
+                        System.out.println("file to split: " + inputfile);
+                        double nol = 200000.0; //  No. of lines to be split and saved in each output file.
                         File file = new File(inputfile);
                         Scanner scanner = new Scanner(file);
                         int count = 0;
@@ -111,7 +127,7 @@ public class App
 
                         for (int j=1;j<=nof;j++)
                         {
-                            FileWriter fstream1 = new FileWriter("/data"+j+".csv");     // Destination File Location
+                            FileWriter fstream1 = new FileWriter("/data/"+ zipFile.getFile().getName() +j+".csv");     // Destination File Location
                             BufferedWriter out = new BufferedWriter(fstream1);
                             for (int i=1;i<=nol;i++)
                             {
@@ -129,6 +145,8 @@ public class App
                         }
 
                         in.close();
+
+                        Files.delete (Paths.get(inputfile));
                     }catch (Exception e)
                     {
                         System.err.println("Error: " + e.getMessage());
@@ -138,6 +156,7 @@ public class App
 
             }
             }
+            /*
             String s3BucketName = System.getenv("DWS3BUCKET");
             AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
             File dir = new File("/data");
@@ -175,6 +194,7 @@ public class App
                 // to avoid race conditions with another process that deletes
                 // directories.
             }
+            */
 
 
 
