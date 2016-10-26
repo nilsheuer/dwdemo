@@ -10,7 +10,7 @@ import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FilenameUtils;
 
-import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -160,9 +160,13 @@ public class App
 
             String s3BucketName = System.getenv("DWS3BUCKET");
             AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("csv files","csv");
+            FilenameFilter csvFiles = new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.toLowerCase().endsWith(".csv");
+                }};
+
             File dir = new File("/data");
-            File[] directoryListing = dir.listFiles(filter);
+            File[] directoryListing = dir.listFiles(csvFiles);
             if (directoryListing != null) {
                 for (File child : directoryListing) {
                     try {
