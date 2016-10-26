@@ -10,6 +10,7 @@ import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FilenameUtils;
 
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -156,11 +157,12 @@ public class App
 
             }
             }
-            /*
+
             String s3BucketName = System.getenv("DWS3BUCKET");
             AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("csv files","csv");
             File dir = new File("/data");
-            File[] directoryListing = dir.listFiles();
+            File[] directoryListing = dir.listFiles(filter);
             if (directoryListing != null) {
                 for (File child : directoryListing) {
                     try {
@@ -194,7 +196,7 @@ public class App
                 // to avoid race conditions with another process that deletes
                 // directories.
             }
-            */
+
 
 
 
