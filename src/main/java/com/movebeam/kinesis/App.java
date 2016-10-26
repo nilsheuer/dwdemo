@@ -60,8 +60,7 @@ public class App
 
         try {
 
-            for (String path:datafileUrls
-                 ) {
+            for (String path:datafileUrls) {
 
                 System.out.println( "Downloading " + path );
 
@@ -132,6 +131,7 @@ public class App
                             BufferedWriter out = new BufferedWriter(fstream1);
                             for (int i=1;i<=nol;i++)
                             {
+                                System.out.println("Gnerating file: "+i);
                                 strLine = br.readLine();
                                 if (strLine!= null)
                                 {
@@ -144,10 +144,11 @@ public class App
                             }
                             out.close();
                         }
-
+                        System.out.println("Done generating");
                         in.close();
-
+                        System.out.println("File closed");
                         Files.delete (Paths.get(inputfile));
+                        System.out.println("Source file delete");
                     }catch (Exception e)
                     {
                         System.err.println("Error: " + e.getMessage());
