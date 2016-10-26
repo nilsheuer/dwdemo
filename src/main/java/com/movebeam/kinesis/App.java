@@ -127,11 +127,12 @@ public class App
 
                         for (int j=1;j<=nof;j++)
                         {
+                            System.out.println("Gnerating file: "+j);
                             FileWriter fstream1 = new FileWriter("/data/"+ zipFile.getFile().getName() +j+".csv");     // Destination File Location
                             BufferedWriter out = new BufferedWriter(fstream1);
                             for (int i=1;i<=nol;i++)
                             {
-                                System.out.println("Gnerating file: "+i);
+
                                 strLine = br.readLine();
                                 if (strLine!= null)
                                 {
